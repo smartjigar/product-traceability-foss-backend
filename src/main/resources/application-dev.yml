@@ -39,3 +39,5 @@ feign:
     url: "https://tracex-irs.dev.demo.catena-x.net"
   registryApi:
     url: https://semantics.int.demo.catena-x.net/registry
+  sdHubApi:
+    url: https://sdhub.int.demo.catena-x.net

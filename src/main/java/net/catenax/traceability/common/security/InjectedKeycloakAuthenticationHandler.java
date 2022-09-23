@@ -19,6 +19,7 @@
 
 package net.catenax.traceability.common.security;
 
+import net.catenax.traceability.investigation.infrastructure.adapters.jpa.AuditorAwareImpl;
 import org.jetbrains.annotations.NotNull;
 import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
@@ -26,7 +27,6 @@ import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -57,35 +57,26 @@ public class InjectedKeycloakAuthenticationHandler implements HandlerMethodArgum
 								  ModelAndViewContainer mavContainer,
 								  @NotNull NativeWebRequest webRequest,
 								  WebDataBinderFactory binderFactory) {
-		Object details = Optional.ofNullable(SecurityContextHolder.getContext())
-			.flatMap(it -> Optional.ofNullable(it.getAuthentication()))
-			.flatMap(it -> Optional.ofNullable(it.getDetails()))
-			.orElseThrow(() -> new IllegalStateException("No valid keycloak authentication found."));
+		AuditorAwareImpl auditorAware = new AuditorAwareImpl();
+		SimpleKeycloakAccount simpleKeycloakAccount = auditorAware.getSimpleKeycloakAccount();
+		RefreshableKeycloakSecurityContext keycloakSecurityContext = simpleKeycloakAccount.getKeycloakSecurityContext();
 
-		if (details instanceof SimpleKeycloakAccount simpleKeycloakAccount) {
-			RefreshableKeycloakSecurityContext keycloakSecurityContext = simpleKeycloakAccount.getKeycloakSecurityContext();
+		AccessToken token = keycloakSecurityContext.getToken();
+		Map<String, AccessToken.Access> resourceAccess = token.getResourceAccess();
 
-			AccessToken token = keycloakSecurityContext.getToken();
-
-			Map<String, AccessToken.Access> resourceAccess = token.getResourceAccess();
-
-			AccessToken.Access access = resourceAccess.get(resourceRealm);
-
-			if (access != null) {
-				Set<KeycloakRole> keycloakRoles = access.getRoles().stream()
-					.map(KeycloakRole::parse)
-					.filter(Optional::isPresent)
-					.map(Optional::get)
-					.collect(Collectors.toSet());
-
-				return new KeycloakAuthentication(keycloakRoles);
-			} else {
-				logger.warn("Keycloak token didn't contain {} resource realm roles", resourceRealm);
-
-				return KeycloakAuthentication.NO_ROLES;
-			}
+		AccessToken.Access access = resourceAccess.get(resourceRealm);
+		String userId = simpleKeycloakAccount.getPrincipal().getName();
+		if (access != null) {
+			Set<KeycloakRole> keycloakRoles = access.getRoles().stream()
+				.map(KeycloakRole::parse)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.collect(Collectors.toSet());
+			return new KeycloakAuthentication(keycloakRoles,userId);
+		} else {
+			logger.warn("Keycloak token didn't contain {} resource realm roles", resourceRealm);
+			return new KeycloakAuthentication(Set.of(),userId);
 		}
 
-		throw new IllegalStateException("No valid keycloak authentication found.");
 	}
 }

@@ -25,12 +25,11 @@ import java.util.Set;
 
 public class KeycloakAuthentication {
 
-	public static final KeycloakAuthentication NO_ROLES = new KeycloakAuthentication(Set.of());
-
 	private final Set<KeycloakRole> keycloakRoles;
-
-	public KeycloakAuthentication(Set<KeycloakRole> keycloakRoles) {
+	private final String userId;
+	public KeycloakAuthentication(Set<KeycloakRole> keycloakRoles, String userId) {
 		this.keycloakRoles = Collections.unmodifiableSet(keycloakRoles);
+		this.userId = userId;
 	}
 
 	public boolean hasRole(KeycloakRole keycloakRole) {
@@ -50,5 +49,9 @@ public class KeycloakAuthentication {
 		return "KeycloakAuthentication{" +
 			"keycloakRoles=" + keycloakRoles +
 			'}';
+	}
+
+	public String getUserId() {
+		return userId;
 	}
 }

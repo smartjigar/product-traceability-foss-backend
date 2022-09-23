@@ -24,6 +24,7 @@ import net.catenax.traceability.assets.domain.model.PageResult;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Set;
 
 public interface AssetRepository {
 	Asset getAssetById(String assetId);
@@ -45,4 +46,6 @@ public interface AssetRepository {
     long countAssets();
 
 	void clean();
+
+	List<Asset> getAssetByIdIn(Set<String> partIds);
 }

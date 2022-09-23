@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,6 +57,12 @@ public class AssetsController {
 	public PageResult<Asset> assets(Pageable pageable) {
 		return assetRepository.getAssets(pageable);
 	}
+
+	@PostMapping("/assets/ids")
+	public List<Asset> assetByIds(AssetByIds assetByIds) {
+		return assetRepository.getAssetByIdIn(assetByIds.ids());
+	}
+
 
 	@GetMapping("/assets/supplier")
 	public PageResult<Asset> supplierAssets(Pageable pageable) {

@@ -23,7 +23,7 @@ traceability:
 server:
   servlet:
     context-path: /api
-
+  port: ${APPLICATION_PORT:8080}
 management:
   endpoint:
     health:
@@ -40,7 +40,7 @@ management:
     web:
       base-path: /actuator
   server:
-    port: 8081
+    port: ${MANAGEMENT_PORT:8081}
 
 spring:
   datasource:
@@ -68,6 +68,8 @@ spring:
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
+  profiles:
+    active: dev
 
 feign:
   okhttp:
@@ -101,3 +103,17 @@ resilience4j:
         waitDuration: 30s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type: TRACE
+
+edc:
+  ids: "/api/v1/ids/data"
+  negotiation: "/data/contractnegotiations"
+  transfer: "/data/transferprocess"
+  catalog: "/data/catalog?providerUrl="
+  api:
+    auth:
+      key: "password"

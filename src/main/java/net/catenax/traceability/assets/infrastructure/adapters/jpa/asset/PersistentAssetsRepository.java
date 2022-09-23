@@ -28,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 import static net.catenax.traceability.assets.infrastructure.adapters.jpa.asset.AssetEntity.ChildDescription;
 
@@ -92,6 +93,11 @@ public class PersistentAssetsRepository implements AssetRepository {
 	@Override
 	public void clean() {
 		assetsRepository.deleteAll();
+	}
+
+	@Override
+	public List<Asset> getAssetByIdIn(Set<String> partIds) {
+		return toAssets(assetsRepository.findByIdIn(partIds));
 	}
 
 	private List<Asset> toAssets(List<AssetEntity> entities) {

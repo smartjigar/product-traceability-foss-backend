@@ -20,6 +20,7 @@
 package net.catenax.traceability.common.config;
 
 import net.catenax.traceability.common.docs.SwaggerPageable;
+import net.catenax.traceability.investigation.infrastructure.adapters.jpa.AuditorAwareImpl;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,9 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -62,6 +65,7 @@ import java.util.List;
 @EnableAsync
 @EnableConfigurationProperties
 @EnableJpaRepositories(basePackages = "net.catenax.traceability.*")
+@EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class ApplicationConfig {
 
 	private static final AuthorizationScope[] DEFAULT_SCOPES = {
@@ -176,7 +180,14 @@ public class ApplicationConfig {
 				new SecurityReference("Keycloak", DEFAULT_SCOPES),
 				new SecurityReference("Bearer", DEFAULT_SCOPES)
 			))
-			.operationSelector(operationContext -> HttpMethod.GET.equals(operationContext.httpMethod()))
+			.operationSelector(operationContext -> HttpMethod.GET.equals(operationContext.httpMethod())
+				|| HttpMethod.POST.equals(operationContext.httpMethod())
+				|| HttpMethod.PUT.equals(operationContext.httpMethod()))
 			.build();
+	}
+
+	@Bean
+	public AuditorAware<String> auditorAware() {
+		return new AuditorAwareImpl();
 	}
 }
