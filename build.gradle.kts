@@ -130,6 +130,9 @@ dependencies {
 	implementation("io.github.resilience4j:resilience4j-retry:${resilience4jVersion}")
 	implementation("io.github.resilience4j:resilience4j-spring-boot2:${resilience4jVersion}")
 
+	implementation("com.auth0:java-jwt:3.19.2")
+	implementation("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
+
     testImplementation("org.codehaus.groovy:groovy-all:$groovyVersion")
 	testImplementation("org.codehaus.groovy:groovy-all:$groovyVersion")
     testImplementation(platform("org.spockframework:spock-bom:$spockBomVersion"))
