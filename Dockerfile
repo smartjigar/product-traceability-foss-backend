@@ -6,7 +6,8 @@ WORKDIR /home/app/product-traceability-foss-backend
 USER root
 RUN groupadd rootGroup &&  usermod -aG rootGroup root
 RUN ./gradlew wrapper
-RUN ./gradlew build -i -x test -x javadoc
+RUN ./gradlew build -i -x test -x javadoc integrationTest
+
 
 WORKDIR /home/app/product-traceability-foss-backend/build/libs
 EXPOSE 8081
