@@ -6,7 +6,7 @@ WORKDIR /home/app/product-traceability-foss-backend
 USER root
 RUN groupadd rootGroup &&  usermod -aG rootGroup root
 RUN ./gradlew wrapper
-RUN ./gradlew build -i -x test -x javadoc integrationTest
+RUN ./gradlew build -i -x test -x javadoc -x integrationTest
 
 
 WORKDIR /home/app/product-traceability-foss-backend/build/libs
