@@ -26,8 +26,8 @@ public class AuditorAwareImpl implements AuditorAware<String> {
 
 	@Override
 	public Optional<String> getCurrentAuditor() {
-		String userId = fetchUserIdFromContext();
-		//String userId = "testUser";
+		//String userId = fetchUserIdFromContext();
+		String userId = "testUser";
 		return !userId.isEmpty() ? Optional.of(userId) : Optional.empty();
 	}
 }
