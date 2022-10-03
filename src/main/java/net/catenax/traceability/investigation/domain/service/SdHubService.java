@@ -26,9 +26,8 @@ public class SdHubService {
 
 	@PostConstruct
 	public void testMethod() {
-		bpnEdcMap.put("man-1", "http://localhost:");
-		bpnEdcMap.put("BPNL00000003AXS3", "http://localhost:");
-
+		bpnEdcMap.put("man-1", "https://consumer-controlplane.dev.demo.ftcpro.co");
+		bpnEdcMap.put("BPNL00000003AXS3", "https://trace-consumer-controlplane.dev.demo.ftcpro.co");
 	}
 
 	private GetSdHubResponse fetchSdHubData(@RequestParam(value = "id", required = false) List<String> ids,

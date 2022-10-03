@@ -20,9 +20,13 @@
 package net.catenax.traceability.assets.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import net.catenax.traceability.common.test.AssetRequest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class Asset {
 	private final String id;
@@ -71,6 +75,24 @@ public final class Asset {
 		this.supplierPart = supplierPart;
 		this.childDescriptions = childDescriptions;
 		this.qualityType = qualityType;
+	}
+
+	//TODO please REMOVE it before PR
+	public Asset(AssetRequest assetRequest) throws ParseException {
+		this.id = assetRequest.getId();
+		this.idShort = assetRequest.getIdShort();
+		this.nameAtManufacturer = assetRequest.getNameAtManufacturer();
+		this.manufacturerPartId = assetRequest.getManufacturerPartId();
+		this.manufacturerId = assetRequest.getManufacturerId();
+		this.manufacturerName = assetRequest.getManufacturerName();
+		this.nameAtCustomer = assetRequest.getNameAtCustomer();
+		this.customerPartId = assetRequest.getCustomerPartId();
+		this.manufacturingDate = new SimpleDateFormat("yyyy-MM-dd").parse(assetRequest.getManufacturingDate()).toInstant();
+		this.manufacturingCountry = assetRequest.getManufacturingCountry();
+		this.childDescriptions = assetRequest.getChildDescriptions().stream().map(e -> new ChildDescriptions(e.getId(), e.getIdShort())).collect(Collectors.toList());
+		this.qualityType = assetRequest.getQualityType();
+		this.supplierPart = true;
+		this.batchId = "test";
 	}
 
 	public String getBatchId() {

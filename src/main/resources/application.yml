@@ -110,10 +110,10 @@ logging:
     org.hibernate.type: TRACE
 
 edc:
-  ids: "/api/v1/ids/data"
+  ids: "/BPNL00000003CML1/api/v1/ids/data"
   negotiation: "/data/contractnegotiations"
   transfer: "/data/transferprocess"
   catalog: "/data/catalog?providerUrl="
   api:
     auth:
-      key: "password"
+      key: "RS377diCTWtjVHuzYz7RcGDFV8wbePh"
