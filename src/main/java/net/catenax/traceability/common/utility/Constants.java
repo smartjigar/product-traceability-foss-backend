@@ -21,8 +21,8 @@ public class Constants {
 
 
 	// only for development purpose.
-	public static final String PROVIDER_IDS_PORT = "8282";
-	public static final String CONSUMER_DATA_PORT = "9191";
+	//public static final String PROVIDER_IDS_PORT = "8282";
+	//public static final String CONSUMER_DATA_PORT = "9191";
 
 
 	private Constants() {

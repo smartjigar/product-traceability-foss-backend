@@ -252,8 +252,11 @@ public class InvestigationService {
 		try {
 
 			var contractOffer = edcService.findNotificationContractOffer(
-				consumerEdcUrl + Constants.CONSUMER_DATA_PORT,
-				providerEdcUrl + Constants.PROVIDER_IDS_PORT + idsPath,
+				consumerEdcUrl,
+					//+ Constants.CONSUMER_DATA_PORT,
+				providerEdcUrl
+					//+ Constants.PROVIDER_IDS_PORT
+					+ idsPath,
 				header
 			);
 
@@ -263,11 +266,14 @@ public class InvestigationService {
 			}
 
 			String agreementId = edcService.initializeContractNegotiation(
-				providerEdcUrl + Constants.PROVIDER_IDS_PORT,
+				providerEdcUrl
+					//+ Constants.PROVIDER_IDS_PORT
+				,
 				contractOffer.get().getAsset().getId(),
 				contractOffer.get().getId(),
 				contractOffer.get().getPolicy(),
-				consumerEdcUrl + Constants.CONSUMER_DATA_PORT,
+				consumerEdcUrl,
+					//+ Constants.CONSUMER_DATA_PORT,
 				header
 			);
 
@@ -284,8 +290,9 @@ public class InvestigationService {
 
 				// Initiate transfer process
 				edcService.initiateHttpProxyTransferProcess(agreementId, contractOffer.get().getAsset().getId(),
-					consumerEdcUrl + Constants.CONSUMER_DATA_PORT,
-					providerEdcUrl + Constants.PROVIDER_IDS_PORT + idsPath,
+					consumerEdcUrl, //+ Constants.CONSUMER_DATA_PORT,
+					providerEdcUrl //+ Constants.PROVIDER_IDS_PORT
+						+ idsPath,
 					header
 				);
 				dataReference = getDataReference(agreementId);
