@@ -26,8 +26,8 @@ public class SdHubService {
 
 	@PostConstruct
 	public void testMethod() {
-		bpnEdcMap.put("man-1", "https://consumer-controlplane.dev.demo.ftcpro.co");
-		bpnEdcMap.put("BPNL00000003AXS3", "https://trace-consumer-controlplane.dev.demo.ftcpro.co");
+		bpnEdcMap.put("man-1", "https://consumer-controlplane.dev.demo.ftcpro.co"); // http://localhost:
+		bpnEdcMap.put("BPNL00000003AXS3", "https://trace-consumer-controlplane.dev.demo.ftcpro.co"); //http://localhost:
 	}
 
 	private GetSdHubResponse fetchSdHubData(@RequestParam(value = "id", required = false) List<String> ids,
@@ -94,6 +94,14 @@ public class SdHubService {
 			return getEdcUrlFromSdHub(bpnNumber);
 		}
 		return edcUrl;
+	}
+
+	public void addUpdateSdHubUrl(String bpnNumber, String edcUrl){
+			bpnEdcMap.put(bpnNumber,edcUrl);
+	}
+
+	public Map<String, String> fetchSdHubUrl(){
+		return bpnEdcMap;
 	}
 
 }

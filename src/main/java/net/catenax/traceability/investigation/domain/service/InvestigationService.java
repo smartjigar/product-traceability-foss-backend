@@ -234,6 +234,7 @@ public class InvestigationService {
 
 			notificationEntityRepository.save(notificationEntity);
 
+			logger.info(":::: EDC Data transfer process starts :::::");
 			//TRANSFER PROCESS START
 			startEDCTransfer(senderEdcUrl, receiverEdcUrl, notificationEntity, receiverBpn);
 		}
@@ -251,31 +252,28 @@ public class InvestigationService {
 		header.put("x-api-key", apiAuthKey);
 		try {
 
+			logger.info(":::: Find Notification contract method[startEDCTransfer] consumerEdcUrl :{}, providerEdcUrl:{}",consumerEdcUrl,providerEdcUrl);
 			var contractOffer = edcService.findNotificationContractOffer(
-				consumerEdcUrl,
-					//+ Constants.CONSUMER_DATA_PORT,
-				providerEdcUrl
-					//+ Constants.PROVIDER_IDS_PORT
-					+ idsPath,
+				consumerEdcPortUrl(consumerEdcUrl),
+				providerEdcPortUrl(providerEdcUrl)+ idsPath,
 				header
 			);
 
 			if (contractOffer.isEmpty()) {
-				logger.info("No contractOffer found");
+				logger.info("No Notification contractOffer found");
 				throw new BadRequestException("No notification contract offer found.");
 			}
 
+			logger.info(":::: Initialize Contract Negotiation method[startEDCTransfer] consumerEdcUrl :{}, providerEdcUrl:{}",consumerEdcUrl,providerEdcUrl);
 			String agreementId = edcService.initializeContractNegotiation(
-				providerEdcUrl
-					//+ Constants.PROVIDER_IDS_PORT
-				,
+				providerEdcPortUrl(providerEdcUrl),
 				contractOffer.get().getAsset().getId(),
 				contractOffer.get().getId(),
 				contractOffer.get().getPolicy(),
-				consumerEdcUrl,
-					//+ Constants.CONSUMER_DATA_PORT,
+				consumerEdcPortUrl(consumerEdcUrl),
 				header
 			);
+			logger.info(":::: Contract Agreed method[startEDCTransfer] agreementId :{}",agreementId);
 
 			if (StringUtils.hasLength(agreementId)) {
 				updateContractAgreementIdForReceiverBpn(notificationEntity, agreementId);
@@ -284,14 +282,16 @@ public class InvestigationService {
 			EndpointDataReference dataReference = endpointDataReferenceCache.get(agreementId);
 			boolean validDataReference = dataReference != null && InMemoryEndpointDataReferenceCache.endpointDataRefTokenExpired(dataReference);
 			if (!validDataReference) {
+				logger.info(":::: Invalid Data Reference :::::" );
 				if (dataReference != null) {
 					endpointDataReferenceCache.remove(agreementId);
 				}
 
+				logger.info(":::: initialize Transfer process with http Proxy :::::" );
 				// Initiate transfer process
 				edcService.initiateHttpProxyTransferProcess(agreementId, contractOffer.get().getAsset().getId(),
-					consumerEdcUrl, //+ Constants.CONSUMER_DATA_PORT,
-					providerEdcUrl //+ Constants.PROVIDER_IDS_PORT
+					consumerEdcPortUrl(consumerEdcUrl),
+					providerEdcPortUrl(providerEdcUrl)
 						+ idsPath,
 					header
 				);
@@ -307,8 +307,10 @@ public class InvestigationService {
 					.addHeader("Content-Type", Constants.JSON.type()).post(RequestBody.create(body, Constants.JSON))
 					.build();
 
+				logger.info(":::: Send notification Data  body :{}, dataReferenceEndpoint :{}",body,dataReference.getEndpoint() );
 				httpCallService.sendRequest(request);
 				updateNotificationStatus(notificationDTO.getNotificationId(), InvestigationStatus.SENT);
+				logger.info(":::: EDC Data Transfer Completed :::::");
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new BadRequestException("EDC Data Transfer fail");
@@ -316,6 +318,16 @@ public class InvestigationService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String consumerEdcPortUrl(String consumerUrl){
+		//return consumerUrl+Constants.CONSUMER_DATA_PORT;
+		return consumerUrl;
+	}
+
+	private String providerEdcPortUrl(String providerEdcUrl){
+		//return providerEdcUrl+Constants.PROVIDER_IDS_PORT;
+		return providerEdcUrl;
 	}
 
 	private EndpointDataReference getDataReference(String agreementId) throws InterruptedException {

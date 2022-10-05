@@ -104,10 +104,6 @@ resilience4j:
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type: TRACE
 
 edc:
   ids: "/BPNL00000003CML1/api/v1/ids/data"

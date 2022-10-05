@@ -62,7 +62,7 @@ public class EdcService {
 			logger.error("No contract found");
 			throw new BadRequestException("Provider has no contract offers for us. Catalog is empty.");
 		}
-
+		logger.info(":::: Find Notification contract method[findNotificationContractOffer] total catalog ::{}",catalog.getContractOffers().size());
 		return catalog.getContractOffers().stream()
 			.filter(it -> it.getAsset().getProperty(Constants.ASSET_TYPE_PROPERTY_NAME).equals(Constants.ASSET_TYPE_NOTIFICATION))
 			.findFirst();
@@ -79,18 +79,23 @@ public class EdcService {
 			.offerId(contractOfferDescription).connectorId("provider").connectorAddress(providerConnectorUrl + idsPath)
 			.protocol("ids-multipart").build();
 
+		logger.info(":::: Start Contract Negotiation method[initializeContractNegotiation] offerId :{}, assetId:{}",offerId,assetId);
+
 		var negotiationId = initiateNegotiation(contractNegotiationRequest, consumerEdcUrl, header);
 		ContractNegotiationDto negotiation = null;
 
 		// Check negotiation state
 		while (negotiation == null || !negotiation.getState().equals(InvestigationStatus.CONFIRMED.name())) {
 
+			logger.info(":::: waiting for contract to get confirmed");
 			ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 			ScheduledFuture<ContractNegotiationDto> scheduledFuture =
 				scheduler.schedule(() -> {
 					var url = consumerEdcUrl + negotiationPath + "/" + negotiationId;
 					var request = new Request.Builder().url(url);
 					header.forEach(request::addHeader);
+
+					logger.info(":::: Start call for contract agreement method [initializeContractNegotiation] URL :{}",url);
 
 					return  (ContractNegotiationDto) httpCallService.sendRequest(request.build(), ContractNegotiationDto.class);
 				},1000,TimeUnit.MILLISECONDS);
@@ -121,6 +126,7 @@ public class EdcService {
 		headers.forEach(request::addHeader);
 		request.build();
 		TransferId negotiationId = (TransferId) httpCallService.sendRequest(request.build(), TransferId.class);
+		logger.info(":::: Method [initiateNegotiation] Negotiation Id :{}",negotiationId.getId());
 		return negotiationId.getId();
 	}
 
@@ -143,6 +149,7 @@ public class EdcService {
 		var request = new Request.Builder().url(url).post(requestBody);
 
 		headers.forEach(request::addHeader);
+		logger.info(":::: call Transfer process with http Proxy method[initiateHttpProxyTransferProcess] agreementId:{} ,assetId :{},consumerEdcDataManagementUrl :{}, providerConnectorControlPlaneIDSUrl:{}",agreementId,assetId,consumerEdcDataManagementUrl,providerConnectorControlPlaneIDSUrl );
 		return (TransferId) httpCallService.sendRequest(request.build(), TransferId.class);
 	}
 }
