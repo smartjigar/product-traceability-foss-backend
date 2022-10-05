@@ -92,6 +92,7 @@ cors:
   origins: >
     http://localhost:4200/,
     https://localhost:3000/,
+    https://*.dev.demo.ftcpro.co/,
     https://traceability-portal.dev.demo.catena-x.net/,
     https://traceability-portal.int.demo.catena-x.net/
 
