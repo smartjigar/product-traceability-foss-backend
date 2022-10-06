@@ -226,8 +226,8 @@ public class InvestigationService {
 			bpns.add(receiverBpn);
 
 			Map<String, String> edcUrlMap = sdHubService.getEDCUrl(bpns);
-			String senderEdcUrl = edcUrlMap.get(senderBPN);
-			String receiverEdcUrl = edcUrlMap.get(receiverBpn);
+			String senderEdcUrl = edcUrlMap.get(senderBPN);// consumer
+			String receiverEdcUrl = edcUrlMap.get(receiverBpn); // provider
 
 			NotificationEntity notificationEntity = notificationEntityOpt.get();
 			notificationEntity.setEdcUrl(receiverEdcUrl);
@@ -236,7 +236,7 @@ public class InvestigationService {
 
 			logger.info(":::: EDC Data transfer process starts :::::");
 			//TRANSFER PROCESS START
-			startEDCTransfer(senderEdcUrl, receiverEdcUrl, notificationEntity, receiverBpn);
+			startEDCTransfer(receiverEdcUrl,senderEdcUrl , notificationEntity, receiverBpn);
 		}
 	}
 
