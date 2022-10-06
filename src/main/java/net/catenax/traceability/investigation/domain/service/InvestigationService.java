@@ -307,7 +307,7 @@ public class InvestigationService {
 					.addHeader("Content-Type", Constants.JSON.type()).post(RequestBody.create(body, Constants.JSON))
 					.build();
 
-				logger.info(":::: Send notification Data  body :{}, dataReferenceEndpoint :{}",body,dataReference.getEndpoint() );
+				logger.info(":::: Send notification Data  body :{}, dataReferenceEndpoint :{}",body,dataReference.getEndpoint());
 				httpCallService.sendRequest(request);
 				updateNotificationStatus(notificationDTO.getNotificationId(), InvestigationStatus.SENT);
 				logger.info(":::: EDC Data Transfer Completed :::::");

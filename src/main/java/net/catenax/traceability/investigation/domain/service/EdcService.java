@@ -64,7 +64,7 @@ public class EdcService {
 		}
 		logger.info(":::: Find Notification contract method[findNotificationContractOffer] total catalog ::{}",catalog.getContractOffers().size());
 		return catalog.getContractOffers().stream()
-			.filter(it -> it.getAsset().getProperty(Constants.ASSET_TYPE_PROPERTY_NAME).equals(Constants.ASSET_TYPE_NOTIFICATION))
+			.filter(it -> it.getAsset().getProperty(Constants.ASSET_TYPE_PROPERTY_NAME) != null && it.getAsset().getProperty(Constants.ASSET_TYPE_PROPERTY_NAME).equals(Constants.ASSET_TYPE_NOTIFICATION))
 			.findFirst();
 	}
 
