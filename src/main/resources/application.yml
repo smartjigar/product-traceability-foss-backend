@@ -77,8 +77,8 @@ feign:
   hystrix:
     enabled: false
   default:
-    connectionTimeoutMillis: 15000
-    readTimeoutMillis: 5000
+    connectionTimeoutMillis: 20000
+    readTimeoutMillis: 20000
     maxIdleConnections: 10
     keepAliveDurationMinutes: 5
 
