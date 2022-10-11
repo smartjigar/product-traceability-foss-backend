@@ -47,6 +47,13 @@ spring:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      connection-timeout: ${HIKARI_CONNECTION_TIMEOUT:20000}
+      minimum-idle: ${HIKARI_MINIMUM_IDLE:10}
+      maximum-pool-size: ${HIKARI_MAXIMUM_POOL:60}
+      idle-timeout: ${HIKARI_IDEL_TIMEOUT:10000}
+      max-lifetime: ${HIKARI_MAX_LIFETIME:1000}
+      auto-commit: true
   security:
     oauth2:
       client:
@@ -77,10 +84,10 @@ feign:
   hystrix:
     enabled: false
   default:
-    connectionTimeoutMillis: 20000
-    readTimeoutMillis: 20000
-    maxIdleConnections: 10
-    keepAliveDurationMinutes: 5
+    connectionTimeoutMillis: ${HTTP_CONNECTION_TIMEOUT:20000}
+    readTimeoutMillis: ${HTTP_READ_TIMEOUT:20000}
+    maxIdleConnections: ${HTTP_MAX_IDLE_CONNECTION:10}
+    keepAliveDurationMinutes: ${HTTP_ALIVE_DURATION:5}
 
 cache:
   bpn:
